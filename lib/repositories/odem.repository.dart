@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sigacred/models/ordem.model.dart';
 
 class OrdemRepository {
   var dio = Dio();
-  Future<List> allOrdens() async {
+  Future<List> getAllOrdens() async {
     List response = [];
     await dio
         .get('https://desafio.sigacred.com.br/v1/ordens')
@@ -20,11 +19,32 @@ class OrdemRepository {
   Future<void> createOrdem() async {
     await dio.post(
       'https://desafio.sigacred.com.br/v1/ordens/create',
+      options: Options(
+        headers: {"Content-Type": "application/json"},
+      ),
       data: {
         "dateOrdem": "2021-06-30T04:22:56.609Z",
         "idClient": 1,
         "idItem": 1
       },
-    );
+    ).then((value) => print(value.data));
+  }
+
+  Future<void> testPost() async {
+    await dio.post(
+      'https://gorest.co.in/public-api/users',
+      options: Options(
+        headers: {"Content-Type": "application/json"},
+      ),
+      data: {
+        // "id": 1,
+        "name": "Leandro",
+        "email": "lm@gmail.com",
+        "gender": "Male",
+        "status": "Active",
+        "created_at": "2021-07-01T03:50:03.383+05:30",
+        "updated_at": "2021-07-01T03:50:03.383+05:30"
+      },
+    ).then((value) => print(value.data));
   }
 }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class NewOrdem extends StatefulWidget {
-  NewOrdem({Key? key}) : super(key: key);
+class NewOrdemView extends StatefulWidget {
+  NewOrdemView({Key? key}) : super(key: key);
 
   @override
-  NewOrdemState createState() => NewOrdemState();
+  NewOrdemViewState createState() => NewOrdemViewState();
 }
 
-class NewOrdemState extends State<NewOrdem> {
+class NewOrdemViewState extends State<NewOrdemView> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -15,7 +15,7 @@ class NewOrdemState extends State<NewOrdem> {
       appBar: AppBar(
         centerTitle: true,
         title: Container(
-            width: size.width * .4,
+            width: size.width * .3,
             child: FittedBox(
               child: Text(
                 "Nova Ordem",
