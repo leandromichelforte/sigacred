@@ -22,8 +22,8 @@ class OrdemRepository {
       ),
       data: {
         "dateOrdem": DateTime.now().toString(),
-        "idClient": 2,
-        "idItem": 20
+        "idClient": 1,
+        "idItem": 2
       },
     ).then((value) {
       _statusCode = value.statusCode;
