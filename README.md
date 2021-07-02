@@ -1,5 +1,4 @@
 # DESAFIO SIGA CRED
-Repositório para postagem da avaliação técnica do processo seletivo da empresa Siga red
 
 # DOCUMENTAÇÃO:
 DESAFIO Desenvolvedor Flutter - Siga Cred
@@ -26,3 +25,42 @@ Criar um app com as seguintes Funcionalidades:
 # APIs
 https://desafio.sigacred.com.br/swagger-ui.html
 
+
+### Conclusão dos requisitos
+
+O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
+
+# Obrigatórios:
+1.	[Ok]
+2.	[Ok]
+# Desejáveis:
+1.	[Impedido] - A API de consultar o histórico de alterações da ordem não dá resposta positiva (Erro 404)
+2.  [Impedido] - A API de criação da ordem não dá uma resposta positiva (Erro 500)
+
+Apesar de não obter resposta positiva de algumas API's, todos as funções e telas foram criadas e prontas para receber os dados. 
+
+## 💻 Ambiente Flutter (flutter doctor):
+
+[√] Flutter (Channel stable, 2.2.2, on Microsoft Windows [versÃ£o 10.0.19041.1052], locale pt-BR)
+[√] Android toolchain - develop for Android devices (Android SDK version 29.0.3)
+
+## 🚀 Instalação
+
+- Direto de um dispositivo mobile basta executar o arquivo .APK
+- De um desktop, é necessário ter o Flutter(superior à versão 2.0) instalado e configurado na máquina para que seja possível emular a aplicação.
+
+## ☕ Utilização
+
+A utilização é bem direta e de acordo com o que foi requisitado na documentação do projeto.
+Logo no início é apresentado uma splash screen com o logo da empresa e o nome da mesma. A landing page é a tela de listagem de todas as ordens existentes. É possível filtrar a pesquisa pressionando o ícone de filtro na lateral direita na barra superior da tela de acordo com os status da ordem (Aberta, Fechadas, Iniciada, Parada).
+A listagem acontece de forma simples e objetiva. Cada cartão representa uma ordem, de cara já é possível visualizar id, problema do item, observação da ordem, data da criação da ordem, nome do cliente, telefone e email.
+Para visualizar os detalhes da ordem, basta pressionar o cartão representante da ordem que o usuário é direcionado à página de detalhes. Na página de detalhe é passada todas as informações disponibilizadas pela API, agrupadas por Cliente, Ordem, Item e Histórico (não visualizado pela resposta negativa da API). Ainda na tela de detalhes, caso a ordem não já esteja fechada é possível executar as funções de iniciar, parar (pausar) e fechar a ordem após o preenchimento do campo de descrição da ação que será executada.
+Após a conclusão da ação, usuário é redirecionado para a tela de listagem para atualização dos dados.
+O acesso à criação de uma nova ordem ocorre através do botão flutuante que fica na landing page do aplicativo. O usuário é direcionado para uma formulário onde é necessário preencher todos os campos para a criação da ordem. Para concluir o salvamento da ordem, basta pressionar o botão na parte inferior direita do dispositivo (não implementado por completo pois a API não retorna uma resposta positiva).
+
+## Observações finais
+
+- Não foi implementado uma forma de diferenciar os níveis de acesso do usuário conectado pois não consta endpoint para buscar tais informações
+- Os requisitos que foram solicitados e não foram entregues por completo, as funções constam no diretório e foi desenvolvida o máximo possível para chegar no resultado final, impedido pela resposta negativa das APIs.
+- Apesar de constar no projeto, não foi utilizado o gestor de estados MOBX nem o Provider pois não haviam informações a serem tratadas em todas as telas da aplicação, portanto, nessa situação, o uso do set state é o mais certo.
+- Design Pattern utilizado foi o MVVM, contudo a parte do VM (viewmodels) não foi bem implementada pelo mesmo motivo da não utilização do MOBX e Provider, pois não haviam muitas telas que se encaixaram nesse padrão.

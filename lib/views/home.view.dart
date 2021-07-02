@@ -1,6 +1,7 @@
 import 'package:circular_clip_route/circular_clip_route.dart';
 import 'package:flutter/material.dart';
 import 'package:filter_list/filter_list.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sigacred/models/cliente.model.dart';
 import 'package:sigacred/models/constants.model.dart';
 import 'package:sigacred/repositories/odem.repository.dart';
@@ -17,15 +18,6 @@ class _HomeViewState extends State<HomeView> {
   List allOrdens = [];
   List selectedOrdens = [];
   var repository = OrdemRepository();
-  // SimpleAppBarController<String> _controller =
-  //     SimpleAppBarController(listFull: ['1', '2']);
-  var cliente = ClienteModel(
-    id: 1,
-    nome: 'Monty',
-    email: 'maxie.will@yahoo.com',
-    endereco: 'Suite 165 209 Ryan View, Juliannaville, NC 67164',
-    fone: '1-812-737-1208',
-  );
 
   void _openFilterDialog() async {
     await FilterListDialog.display<String>(
@@ -37,7 +29,7 @@ class _HomeViewState extends State<HomeView> {
       selectedItemsText: "status selecionado(s)",
       applyButonTextBackgroundColor: Colors.blue[900]!,
       applyButtonTextStyle: TextStyle(color: Colors.white),
-      listData: ['Aberta', 'Fechada', 'Iniciada', 'Pausada'],
+      listData: ['Aberta', 'Fechada', 'Iniciada', 'Parada'],
       selectedListData: [],
       height: 300,
       choiceChipLabel: (item) {
@@ -84,7 +76,7 @@ class _HomeViewState extends State<HomeView> {
               }
             }).toList();
           }
-          if (list.contains('Pausada')) {
+          if (list.contains('Parada')) {
             allOrdens.map((e) {
               if (e['paussed'] && !selectedOrdens.contains(e)) {
                 selectedOrdens.add(e);
@@ -102,11 +94,14 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     repository.getAllOrdens().then((value) {
-      setState(() {
-        allOrdens = value;
-      });
+      if (value.isNotEmpty) {
+        setState(() {
+          allOrdens = value;
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Falha ao buscar as ordens");
+      }
     });
-    // _controller = SimpleAppBarController(listFull: ['1', '2']);
   }
 
   @override
@@ -117,10 +112,6 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
         actions: [
-          IconButton(
-            onPressed: () => print(selectedOrdens.length),
-            icon: Icon(Icons.ac_unit),
-          ),
           IconButton(
             onPressed: () => _openFilterDialog(),
             icon: Icon(Icons.filter_alt_rounded),
@@ -178,7 +169,7 @@ class _HomeViewState extends State<HomeView> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    allOrdens[index]['dateClosed'].toString(),
+                                    allOrdens[index]['dateOrdem'].toString(),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Row(
@@ -210,7 +201,14 @@ class _HomeViewState extends State<HomeView> {
                       },
                     )
                   : Center(
-                      child: Text("Nenhuma ordem encontrada."),
+                      child: Text(
+                        "Nenhuma ordem encontrada :(",
+                        style: TextStyle(
+                          color: Colors.blue[900],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
                     )
               : ListView.builder(
                   itemCount: selectedOrdens.length,
@@ -280,7 +278,8 @@ class _HomeViewState extends State<HomeView> {
                 ),
         );
       }),
-      floatingActionButton: IconButton(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[900],
         onPressed: () {
           Navigator.push(
               context,
@@ -289,7 +288,10 @@ class _HomeViewState extends State<HomeView> {
                 expandFrom: context,
               ));
         },
-        icon: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
