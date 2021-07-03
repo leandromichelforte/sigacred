@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 class OrdemRepository {
   var dio = Dio();
@@ -21,9 +22,11 @@ class OrdemRepository {
         headers: {"Content-Type": "application/json"},
       ),
       data: {
-        "dateOrdem": DateTime.now().toString(),
+        "dateOrdem": DateFormat("yyyy-MM-ddTHH:mm:ss'.000Z'")
+            .format(DateTime.now())
+            .toString(),
         "idClient": 1,
-        "idItem": 2
+        "idItem": 2,
       },
     ).then((value) {
       _statusCode = value.statusCode;

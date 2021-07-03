@@ -27,9 +27,14 @@ class NewOrdemViewState extends State<NewOrdemView> {
         tooltip: "Salvar",
         backgroundColor: Colors.blue[900],
         onPressed: () async {
-          if (_formKey.currentState!.validate())
+          if (_formKey.currentState!.validate()) {
+            setState(() {
+              _repository.busy = true;
+            });
+            _formKey.currentState!.save();
             await _repository.createOrdem().then((value) async {
               if (value == 201) {
+                Fluttertoast.showToast(msg: "Ordem criada com sucesso.");
                 await Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute<void>(
@@ -41,9 +46,23 @@ class NewOrdemViewState extends State<NewOrdemView> {
                 Fluttertoast.showToast(
                     msg: "Erro ao criar ordem. (Código $value)");
               }
+              setState(() {
+                _repository.busy = false;
+              });
             });
+          }
         },
-        child: Icon(Icons.save_rounded),
+        child: _repository.busy
+            ? Container(
+                height: 25,
+                width: 25,
+                child: FittedBox(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            : Icon(Icons.save_rounded),
       ),
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
@@ -74,7 +93,10 @@ class NewOrdemViewState extends State<NewOrdemView> {
                     ),
                   ),
                   TextFormField(
-                    onSaved: (value) => cliente.nome = value,
+                    onSaved: (value) {
+                      cliente.nome = value;
+                      value = "";
+                    },
                     validator: (value) {
                       if (value != null) if (value.isEmpty)
                         return "Não pode ficar vazio";
@@ -97,7 +119,10 @@ class NewOrdemViewState extends State<NewOrdemView> {
                     ),
                   ),
                   TextFormField(
-                    onSaved: (value) => cliente.endereco = value,
+                    onSaved: (value) {
+                      cliente.endereco = value;
+                      value = "";
+                    },
                     validator: (value) {
                       if (value != null) if (value.isEmpty)
                         return "Não pode ficar vazio";
@@ -122,7 +147,10 @@ class NewOrdemViewState extends State<NewOrdemView> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onSaved: (value) => cliente.fone = value,
+                    onSaved: (value) {
+                      cliente.fone = value;
+                      value = "";
+                    },
                     validator: (value) {
                       if (value != null) if (value.isEmpty)
                         return "Não pode ficar vazio";
@@ -145,7 +173,10 @@ class NewOrdemViewState extends State<NewOrdemView> {
                     ),
                   ),
                   TextFormField(
-                    onSaved: (value) => cliente.email = value,
+                    onSaved: (value) {
+                      cliente.email = value;
+                      value = "";
+                    },
                     validator: (value) {
                       if (value != null) if (value.isEmpty)
                         return "Não pode ficar vazio";

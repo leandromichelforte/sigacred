@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:sigacred/repositories/odem.repository.dart';
 import 'package:sigacred/views/home.view.dart';
 
@@ -13,42 +14,50 @@ class OrdemDetailsView extends StatefulWidget {
 class _OrdemDetailsViewState extends State<OrdemDetailsView> {
   final _formKey = GlobalKey<FormState>();
   OrdemRepository _repository = OrdemRepository();
-  List<Map<String, dynamic>> = _history = [
+  List<Map<String, dynamic>> _history = [
     {
       "id": 6,
       "action": "Fechamento",
-      "obs": "Fim da tratativa do problema. Item pronto para devolução ao usuário.",
-      "date": DateTime.now(),
+      "obs":
+          "Fim da tratativa do problema. Item pronto para devolução ao usuário.",
+      "date": DateFormat('dd/MM/yyyy hh:mm').format(DateTime.now()).toString(),
     },
     {
       "id": 5,
       "action": "Início",
-      "obs": "",
-      "date": DateTime.now().subtract(Duration(hours: 2)),
+      "obs": "Retorno com a peça faltante e retomada a manutenção",
+      "date": DateFormat('dd/MM/yyyy hh:mm')
+          .format(DateTime.now().subtract(Duration(hours: 2))),
     },
     {
       "id": 4,
       "action": "Parada",
       "obs": "Procura e busca de peça excencial para funcionamento do item",
-      "date": DateTime.now().subtract(Duration(days: 2)),
+      "date": DateFormat('dd/MM/yyyy hh:mm')
+          .format(DateTime.now().subtract(Duration(days: 2))),
     },
     {
       "id": 3,
       "action": "Início",
-      "obs": "Item voltou da garantia de fábria. Retorno da tratativa do problema",
-      "date": DateTime.now().subtract(Duration(days: 4)),
+      "obs":
+          "Item voltou da garantia de fábria. Retorno da tratativa do problema",
+      "date": DateFormat('dd/MM/yyyy hh:mm')
+          .format((DateTime.now().subtract(Duration(days: 4)))),
     },
     {
       "id": 2,
       "action": "Parada",
-      "obs": "Item com defeito de fábrica. Será usada garantia de fábrica. Previsão de retorno em até 5 dias",
-      "date": DateTime.now().subtract(Duration(days: 9)),
+      "obs":
+          "Item com defeito de fábrica. Será usada garantia de fábrica. Previsão de retorno em até 5 dias",
+      "date": DateFormat('dd/MM/yyyy hh:mm')
+          .format(DateTime.now().subtract(Duration(days: 9))),
     },
     {
       "id": 1,
       "action": "Início",
       "obs": "Ordem notada e iniciada a tratativa",
-      "date": DateTime.now().subtract(Duration(days: 12)),
+      "date": DateFormat('dd/MM/yyyy hh:mm')
+          .format(DateTime.now().subtract(Duration(days: 12))),
     },
   ];
   TextEditingController _actionController = TextEditingController();
@@ -134,41 +143,33 @@ class _OrdemDetailsViewState extends State<OrdemDetailsView> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        "Telefone: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        ordem['cliente']['fone'] ?? " ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue[900],
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Telefone: ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        "Email: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        ordem['cliente']['email'] ?? " ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue[900],
-                        ),
-                      ),
-                    ],
+                  Text(
+                    ordem['cliente']['fone'] ?? " ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                  Text(
+                    "Email: ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    ordem['cliente']['email'] ?? " ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.blue[900],
+                    ),
                   ),
                   Text(
                     "Endereço: ",
@@ -427,45 +428,53 @@ class _OrdemDetailsViewState extends State<OrdemDetailsView> {
                       fontSize: 20,
                     ),
                   ),
-                  Container(height: constraints.maxHeight * 0.3, width: constraints.maxWidth, child: ListView.builder(
+                  Container(
+                    height: constraints.maxHeight * 0.3,
+                    width: constraints.maxWidth,
+                    child: ListView.builder(
                       itemCount: _history.length,
                       itemBuilder: (_, index) {
                         return Card(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _history[index]['obs'] ?? " ",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.blue[900],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                          color: Colors.grey[300],
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _history[index]['obs'] ?? " ",
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.blue[900],
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Text(
-                                    _history[index]['action'] ?? " ",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.blue[900],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                                ),
+                                Text(
+                                  _history[index]['action'] ?? " ",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Text(
-                                    _history[index]['date'] ?? " ",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.blue[900],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                                ),
+                                Text(
+                                  _history[index]['date'].toString(),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );}),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   Divider(),
                   ordem['dateClosed'].toString().isEmpty ||
                           ordem['dateClosed'] == null
@@ -607,15 +616,15 @@ class _OrdemDetailsViewState extends State<OrdemDetailsView> {
                                             ),
                                           ),
                                           onPressed: () async {
-                                            setState(() {
-                                              _repository.busy = true;
-                                            });
-                                            if ([
-                                              "",
-                                              null
-                                            ].contains(ordem['dateClosed'])) {
+                                            if (["", null].contains(
+                                                    ordem['dateClosed']) &&
+                                                ![null, ""].contains(
+                                                    ordem['dateStart'])) {
                                               if (_formKey.currentState!
                                                   .validate()) {
+                                                setState(() {
+                                                  _repository.busy = true;
+                                                });
                                                 await _repository
                                                     .closeOrdem(ordem['id'],
                                                         _actionController.text)
@@ -636,7 +645,8 @@ class _OrdemDetailsViewState extends State<OrdemDetailsView> {
                                               }
                                             } else {
                                               Fluttertoast.showToast(
-                                                  msg: "Ordem já está fechada");
+                                                  msg:
+                                                      "Ordem fechada ou ainda não iniciada");
                                             }
                                           },
                                           child: Text("Fechar"),

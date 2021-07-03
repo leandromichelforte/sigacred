@@ -35,9 +35,10 @@ O projeto ainda está em desenvolvimento e as próximas atualizações serão vo
 2.	[Ok]
 # Desejáveis:
 1.	[Impedido] - A API de consultar o histórico de alterações da ordem não dá resposta positiva (Erro 404)
-2.  [Impedido] - A API de criação da ordem não dá uma resposta positiva (Erro 500)
+2.  [Ok]
 
 Apesar de não obter resposta positiva de algumas API's, todos as funções e telas foram criadas e prontas para receber os dados. 
+Foi criado um histórico fixo e fictício para a o complemento da tela de detalhe da ordem.
 
 ## 💻 Ambiente Flutter (flutter doctor):
 
@@ -46,7 +47,7 @@ Apesar de não obter resposta positiva de algumas API's, todos as funções e te
 
 ## 🚀 Instalação
 
-- Direto de um dispositivo mobile basta executar o arquivo .APK
+- Direto de um dispositivo mobile basta executar o arquivo .APK localizado em: "/build/app/outputs/flutter-apk/app-release.apk"
 - De um desktop, é necessário ter o Flutter(superior à versão 2.0) instalado e configurado na máquina para que seja possível emular a aplicação.
 
 ## ☕ Utilização

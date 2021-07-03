@@ -26,14 +26,15 @@ dependencies:
   circular_clip_route: ^0.2.0
   cupertino_icons: ^1.0.2
   dio: ^4.0.0
-  search_app_bar_page: ^2.0.1
+  filter_list: ^1.0.0
   flutter_mobx: ^2.0.0
   fluttertoast: ^8.0.7
   google_fonts: ^2.1.0
+  intl: ^0.17.0
   mobx: ^2.0.1
   provider: ^5.0.0
+  search_app_bar_page: ^2.0.1
   splash_screen_view: ^3.0.0
-  filter_list: ^1.0.0
 
 dev_dependencies:
   flutter_test:

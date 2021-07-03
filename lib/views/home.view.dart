@@ -2,7 +2,6 @@ import 'package:circular_clip_route/circular_clip_route.dart';
 import 'package:flutter/material.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sigacred/models/cliente.model.dart';
 import 'package:sigacred/models/constants.model.dart';
 import 'package:sigacred/repositories/odem.repository.dart';
 import 'package:sigacred/views/newOrdem.view.dart';
@@ -17,7 +16,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   List allOrdens = [];
   List selectedOrdens = [];
-  var repository = OrdemRepository();
+  var _repository = OrdemRepository();
 
   void _openFilterDialog() async {
     await FilterListDialog.display<String>(
@@ -55,33 +54,42 @@ class _HomeViewState extends State<HomeView> {
       onApplyButtonClick: (list) {
         if (list != null) {
           selectedOrdens.clear();
-          if (list.contains('Aberta')) {
-            allOrdens.map((e) {
-              if (e['dateClosed'] == null && !selectedOrdens.contains(e)) {
-                selectedOrdens.add(e);
-              }
-            }).toList();
-          }
-          if (list.contains('Fechada')) {
-            allOrdens.map((e) {
-              if (e['dateClosed'] != null && !selectedOrdens.contains(e)) {
-                selectedOrdens.add(e);
-              }
-            }).toList();
-          }
-          if (list.contains('Iniciada')) {
-            allOrdens.map((e) {
-              if (e['dateStart'] != null && !selectedOrdens.contains(e)) {
-                selectedOrdens.add(e);
-              }
-            }).toList();
-          }
-          if (list.contains('Parada')) {
-            allOrdens.map((e) {
-              if (e['paussed'] && !selectedOrdens.contains(e)) {
-                selectedOrdens.add(e);
-              }
-            }).toList();
+          if (list.isNotEmpty) {
+            if (list.contains('Aberta')) {
+              allOrdens.map((e) {
+                if (e['dateClosed'] == null && !selectedOrdens.contains(e)) {
+                  selectedOrdens.add(e);
+                }
+              }).toList();
+            }
+            if (list.contains('Fechada')) {
+              allOrdens.map((e) {
+                if (e['dateClosed'] != null && !selectedOrdens.contains(e)) {
+                  selectedOrdens.add(e);
+                }
+              }).toList();
+            }
+            if (list.contains('Iniciada')) {
+              allOrdens.map((e) {
+                if (e['dateStart'] != null && !selectedOrdens.contains(e)) {
+                  selectedOrdens.add(e);
+                }
+              }).toList();
+            }
+            if (list.contains('Parada')) {
+              allOrdens.map((e) {
+                if (e['paussed'] && !selectedOrdens.contains(e)) {
+                  selectedOrdens.add(e);
+                }
+              }).toList();
+            }
+            if (list.isEmpty || list.length == 4) {
+              allOrdens.map((e) {
+                if (e['paussed'] && !selectedOrdens.contains(e)) {
+                  selectedOrdens.add(e);
+                }
+              }).toList();
+            }
           }
           setState(() {});
         }
@@ -93,7 +101,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    repository.getAllOrdens().then((value) {
+    setState(() {
+      _repository.busy = true;
+    });
+    _repository.getAllOrdens().then((value) {
       if (value.isNotEmpty) {
         setState(() {
           allOrdens = value;
@@ -101,6 +112,9 @@ class _HomeViewState extends State<HomeView> {
       } else {
         Fluttertoast.showToast(msg: "Falha ao buscar as ordens");
       }
+      setState(() {
+        _repository.busy = false;
+      });
     });
   }
 
@@ -132,17 +146,167 @@ class _HomeViewState extends State<HomeView> {
           color: Colors.grey[300],
           height: constraints.maxHeight,
           width: constraints.maxWidth,
-          child: selectedOrdens.isEmpty
-              ? allOrdens.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: allOrdens.length,
+          child: _repository.busy
+              ? Center(
+                  child: Container(
+                    width: constraints.maxWidth * .5,
+                    child: FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "Carregando...  ",
+                            style: TextStyle(
+                              color: Colors.blue[900],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.blue[900],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : selectedOrdens.isEmpty
+                  ? allOrdens.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: allOrdens.length,
+                          itemBuilder: (_, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.ordemDetailsView,
+                                  arguments: allOrdens[index],
+                                );
+                              },
+                              child: Card(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${allOrdens[index]['id']}. ${allOrdens[index]['iten']['problem']}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Colors.blue[900],
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        allOrdens[index]['obsOrdem'] == null
+                                            ? "Sem observação"
+                                            : allOrdens[index]['obsOrdem']
+                                                .toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        allOrdens[index]['dateOrdem']
+                                            .toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Container(
+                                        width: constraints.maxWidth,
+                                        child: FittedBox(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                width:
+                                                    constraints.maxWidth * .3,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    FittedBox(
+                                                      child: Text(
+                                                        allOrdens[index]
+                                                                    ['cliente']
+                                                                ['nome']
+                                                            .toString(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                width:
+                                                    constraints.maxWidth * .3,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    FittedBox(
+                                                      child: Text(
+                                                        allOrdens[index]
+                                                                    ['cliente']
+                                                                ['fone']
+                                                            .toString(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                width:
+                                                    constraints.maxWidth * .3,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    FittedBox(
+                                                      child: Text(
+                                                        allOrdens[index]
+                                                                    ['cliente']
+                                                                ['email']
+                                                            .toString(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text(
+                            "Nenhuma ordem encontrada :(",
+                            style: TextStyle(
+                              color: Colors.blue[900],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        )
+                  : ListView.builder(
+                      itemCount: selectedOrdens.length,
                       itemBuilder: (_, index) {
                         return GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
                               context,
                               Routes.ordemDetailsView,
-                              arguments: allOrdens[index],
+                              arguments: selectedOrdens[index],
                             );
                           },
                           child: Card(
@@ -154,7 +318,7 @@ class _HomeViewState extends State<HomeView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${allOrdens[index]['id']}. ${allOrdens[index]['iten']['problem']}",
+                                    "${selectedOrdens[index]['id']}. ${selectedOrdens[index]['iten']['problem']}",
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         color: Colors.blue[900],
@@ -162,14 +326,15 @@ class _HomeViewState extends State<HomeView> {
                                         fontSize: 20),
                                   ),
                                   Text(
-                                    allOrdens[index]['obsOrdem'] == null
+                                    selectedOrdens[index]['obsOrdem'] == null
                                         ? "Sem observação"
-                                        : allOrdens[index]['obsOrdem']
+                                        : selectedOrdens[index]['obsOrdem']
                                             .toString(),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    allOrdens[index]['dateOrdem'].toString(),
+                                    selectedOrdens[index]['dateClosed']
+                                        .toString(),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Row(
@@ -177,17 +342,18 @@ class _HomeViewState extends State<HomeView> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        allOrdens[index]['cliente']['nome']
+                                        selectedOrdens[index]['cliente']['nome']
                                             .toString(),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        allOrdens[index]['cliente']['fone']
+                                        selectedOrdens[index]['cliente']['fone']
                                             .toString(),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        allOrdens[index]['cliente']['email']
+                                        selectedOrdens[index]['cliente']
+                                                ['email']
                                             .toString(),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -199,83 +365,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         );
                       },
-                    )
-                  : Center(
-                      child: Text(
-                        "Nenhuma ordem encontrada :(",
-                        style: TextStyle(
-                          color: Colors.blue[900],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                    )
-              : ListView.builder(
-                  itemCount: selectedOrdens.length,
-                  itemBuilder: (_, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.ordemDetailsView,
-                          arguments: selectedOrdens[index],
-                        );
-                      },
-                      child: Card(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${selectedOrdens[index]['id']}. ${selectedOrdens[index]['iten']['problem']}",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Colors.blue[900],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              Text(
-                                selectedOrdens[index]['obsOrdem'] == null
-                                    ? "Sem observação"
-                                    : selectedOrdens[index]['obsOrdem']
-                                        .toString(),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                selectedOrdens[index]['dateClosed'].toString(),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    selectedOrdens[index]['cliente']['nome']
-                                        .toString(),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    selectedOrdens[index]['cliente']['fone']
-                                        .toString(),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    selectedOrdens[index]['cliente']['email']
-                                        .toString(),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                    ),
         );
       }),
       floatingActionButton: FloatingActionButton(
